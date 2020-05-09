@@ -9,6 +9,8 @@ var FileStore = require("session-file-store")(session);
 var dishRouter = require("./routes/dishRouter");
 var leaderRouter = require("./routes/leaderRouter");
 var promoRouter = require("./routes/promoRouter");
+var userRouter = require("./routes/userRouter");
+var indexRouter = require("./routes/index");
 
 const mongoose = require("mongoose");
 
@@ -43,43 +45,22 @@ app.use(
     store: new FileStore(),
   })
 );
+app.use("/", indexRouter);
+app.use("/users", userRouter);
 
 // auth
 function auth(req, res, next) {
   console.log(req.session);
 
   if (!req.session.user) {
-    var authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      var err = new Error("You are not authenticated");
-      res.setHeader("WWW-Authenticate", "Basic");
-      err.status = 401;
-      return next(err);
-    }
-
-    var auth = new Buffer.from(authHeader.split(" ")[1], "base64")
-      .toString()
-      .split(":");
-    var username = auth[0];
-    var password = auth[1];
-
-    if (username === "admin" && password === "password") {
-      // res.cookie("user", "admin", { signed: true });
-      req.session.user = "admin";
-      next();
-    } else {
-      var err = new Error("You are not authenticated");
-      res.setHeader("WWW-Authenticate", "Basic");
-      err.status = 401;
-      return next(err);
-    }
+    var err = new Error("You are not authenticated !");
+    err.status = 401;
+    return next(err);
   } else {
-    if (req.session.user === "admin") {
+    if (req.session.user === "authenticated") {
       next();
     } else {
       var err = new Error("You are not authenticated");
-      res.setHeader("WWW-Authenticate", "Basic");
       err.status = 401;
       return next(err);
     }
