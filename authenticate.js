@@ -27,13 +27,10 @@ exports.jwtPassport = passport.use(
     console.log("JWT payload: " + jwt_payload);
     User.findOne({ _id: jwt_payload._id }, (err, user) => {
       if (err) {
-          console.log('1')
         return done(err, false);
       } else if (user) {
-        console.log('2')
         return done(null,user);
       } else {
-        console.log('3')
         return done(null, false);
       }
     });
