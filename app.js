@@ -31,6 +31,19 @@ connect.then(
 
 var app = express();
 
+// middleware for all the requiest // check the secure server
+
+app.all("*", (req, res, next) => {
+  if (req.secure) {
+    return next();
+  } else {
+    res.redirect(
+      307,
+      "https://" + req.hostname + ":" + app.get("secPort") + req.url
+    );
+  }
+});
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
@@ -44,8 +57,6 @@ app.use(passport.session());
 
 app.use("/", indexRouter);
 app.use("/users", userRouter);
-
-
 
 app.use(express.static(path.join(__dirname, "public")));
 
