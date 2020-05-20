@@ -22,7 +22,7 @@ userRouter.get(
   }
 );
 
-userRouter.post("/signup",cors.corsWithOptions, (req, res, next) => {
+userRouter.post("/signup", cors.corsWithOptions, (req, res, next) => {
   User.register(
     new User({ username: req.body.username }),
     req.body.password,
@@ -52,16 +52,21 @@ userRouter.post("/signup",cors.corsWithOptions, (req, res, next) => {
   );
 });
 
-userRouter.post("/login",cors.corsWithOptions, passport.authenticate("local"), (req, res, next) => {
-  var token = authenticate.getToken({ _id: req.user._id });
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "application/json");
-  res.json({
-    success: true,
-    status: "You are Successfully logged in !",
-    token: token,
-  });
-});
+userRouter.post(
+  "/login",
+  cors.corsWithOptions,
+  passport.authenticate("local"),
+  (req, res, next) => {
+    var token = authenticate.getToken({ _id: req.user._id });
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.json({
+      success: true,
+      status: "You are Successfully logged in !",
+      token: token,
+    });
+  }
+);
 
 userRouter.get("/logout", (req, res, next) => {
   if (req.session) {
@@ -74,5 +79,22 @@ userRouter.get("/logout", (req, res, next) => {
     next(err);
   }
 });
+
+userRouter.get(
+  "/facebook/token",
+  passport.authenticate('facebook-token'),
+  (req, res) => {
+    if (req.user) {
+      var token = authenticate.getToken({ _id: req.user._id }).toString();
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.json({
+        success: true,
+        status: "You are Successfully logged in !",
+        token: token,
+      });
+    }
+  }
+);
 
 module.exports = userRouter;

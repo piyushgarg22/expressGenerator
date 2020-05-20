@@ -18,7 +18,7 @@ const commentSchema = new Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:'User'
+      ref: "User",
     },
   },
   {
@@ -51,9 +51,13 @@ const dishSchema = new Schema(
     },
     label: {
       type: String,
-      default: '',
+      default: "",
     },
     comments: [commentSchema],
+    favourite: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
